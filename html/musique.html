@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Musique — Mickaël Pilon</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Syne:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a08;
+  --surface:#111110;
+  --surface2:#181816;
+  --ink:#e8e4da;
+  --ink2:#9a9690;
+  --ink3:#5a5852;
+  --accent:#c4a96e;
+  --accent2:#7a9e7e;
+  --border:rgba(196,169,110,0.12);
+  --border2:rgba(196,169,110,0.22);
+  --r:#ff2d55;
+  --b:#0088ff;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:'Syne',sans-serif;overflow-x:hidden;cursor:none}
+
+.cur{position:fixed;width:6px;height:6px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%)}
+.cur-ring{position:fixed;width:28px;height:28px;border:1px solid rgba(196,169,110,0.35);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width 0.3s,height 0.3s,border-color 0.3s}
+.cur-ring.big{width:48px;height:48px;border-color:rgba(196,169,110,0.6)}
+
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:500;opacity:0.035;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+@keyframes gh1{
+  0%,100%{clip-path:inset(100% 0 0 0);transform:translate(0)}
+  20%{clip-path:inset(18% 0 58% 0);transform:translate(-5px,0)}
+  40%{clip-path:inset(62% 0 10% 0);transform:translate(4px,0)}
+  60%{clip-path:inset(35% 0 42% 0);transform:translate(-3px,0)}
+  80%{clip-path:inset(5% 0 78% 0);transform:translate(6px,0)}
+}
+@keyframes gh2{
+  0%,100%{clip-path:inset(100% 0 0 0);transform:translate(0)}
+  25%{clip-path:inset(44% 0 28% 0);transform:translate(5px,0)}
+  50%{clip-path:inset(8% 0 72% 0);transform:translate(-4px,0)}
+  75%{clip-path:inset(70% 0 5% 0);transform:translate(3px,0)}
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes waveAnim{0%,100%{transform:scaleY(0.2)}50%{transform:scaleY(1)}}
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+@keyframes progressPulse{0%,100%{opacity:1}50%{opacity:0.5}}
+
+.glitch{position:relative;display:inline-block}
+.glitch .gl,.glitch .glb{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity 0.05s}
+.glitch .gl{color:var(--r)}
+.glitch .glb{color:var(--b)}
+.glitch:hover .gl{opacity:0.9;animation:gh1 0.45s steps(1) infinite}
+.glitch:hover .glb{opacity:0.75;animation:gh2 0.45s steps(1) infinite 0.07s}
+
+/* NAV */
+nav{
+  position:sticky;top:0;z-index:300;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:1.4rem 3rem;
+  background:rgba(10,10,8,0.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;letter-spacing:0.08em;color:var(--ink);text-decoration:none}
+.nav-logo .gl,.nav-logo .glb{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;letter-spacing:0.08em}
+.nav-back{font-size:0.62rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--ink3);text-decoration:none;display:flex;align-items:center;gap:0.6rem;transition:color 0.25s}
+.nav-back:hover{color:var(--accent)}
+.nav-back .gl,.nav-back .glb{font-size:0.62rem;letter-spacing:0.22em;text-transform:uppercase}
+
+/* HERO */
+#hero{
+  padding:5rem 3rem 4rem;
+  border-bottom:1px solid var(--border);
+  position:relative;overflow:hidden;
+}
+.hero-wave{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:60%;height:80px;opacity:0.07;
+  display:flex;align-items:center;gap:2px;pointer-events:none;
+}
+.wbar{flex:1;background:var(--accent);border-radius:1px;transform-origin:center;animation:waveAnim 2s ease-in-out infinite}
+.hero-eyebrow{font-size:0.6rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--accent);margin-bottom:1.5rem;opacity:0;animation:fadeUp 0.9s ease forwards 0.2s}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(3.5rem,8vw,6rem);font-weight:300;line-height:0.95;opacity:0;animation:fadeUp 0.9s ease forwards 0.4s}
+.hero-title em{font-style:italic;color:var(--accent)}
+.hero-sub{font-size:0.8rem;color:var(--ink2);line-height:1.8;max-width:480px;margin-top:2rem;opacity:0;animation:fadeUp 0.9s ease forwards 0.6s}
+
+/* FILTRES */
+.filters{
+  display:flex;align-items:center;gap:0;
+  border-bottom:1px solid var(--border);
+  overflow-x:auto;
+}
+.filter-btn{
+  font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;
+  padding:1.2rem 2rem;border:none;background:none;
+  color:var(--ink3);cursor:none;
+  border-bottom:2px solid transparent;
+  transition:color 0.2s,border-color 0.2s;
+  white-space:nowrap;flex-shrink:0;
+}
+.filter-btn:hover{color:var(--ink)}
+.filter-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* CATALOGUE */
+.catalogue{padding:0 3rem 4rem}
+
+.cat-section{margin-top:3rem}
+.cat-header{
+  display:flex;align-items:baseline;gap:1.5rem;
+  padding-bottom:1rem;
+  border-bottom:1px solid var(--border);
+  margin-bottom:0;
+}
+.cat-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;font-style:italic}
+.cat-count{font-size:0.55rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink3)}
+
+/* TRACK ROW */
+.track-row{
+  display:grid;
+  grid-template-columns:40px 1fr 120px 200px 32px;
+  align-items:center;gap:1.5rem;
+  padding:1rem 0;
+  border-bottom:1px solid var(--border);
+  transition:background 0.2s;
+  position:relative;
+}
+.track-row::before{
+  content:'';position:absolute;left:-3rem;top:0;bottom:0;
+  width:2px;background:var(--accent);
+  transform:scaleY(0);transition:transform 0.25s;
+}
+.track-row:hover::before,.track-row.playing::before{transform:scaleY(1)}
+.track-row:hover,.track-row.playing{background:rgba(196,169,110,0.03)}
+
+.track-num{font-size:0.6rem;letter-spacing:0.1em;color:var(--ink3);text-align:center}
+.track-play-btn{
+  width:28px;height:28px;
+  border:1px solid var(--border2);border-radius:50%;
+  background:none;cursor:none;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:border-color 0.2s,background 0.2s;
+}
+.track-play-btn:hover,.track-row.playing .track-play-btn{border-color:var(--accent);background:rgba(196,169,110,0.08)}
+.t-play-icon{width:0;height:0;border-style:solid;border-width:5px 0 5px 8px;border-color:transparent transparent transparent var(--ink);margin-left:2px}
+.t-pause-icon{display:none;gap:2px;align-items:center}
+.t-pause-bar{width:2px;height:10px;background:var(--ink)}
+
+.track-info{}
+.track-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:400}
+.track-title .gl,.track-title .glb{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:400}
+
+.track-dur{font-size:0.6rem;letter-spacing:0.1em;color:var(--ink3);text-align:right}
+
+.track-progress-wrap{height:2px;background:var(--border2);cursor:pointer;position:relative;border-radius:1px}
+.track-progress-bar{height:100%;background:var(--accent);width:0%;border-radius:1px;transition:width 0.1s linear}
+
+.track-wave{
+  display:flex;align-items:center;gap:1px;height:24px;
+  opacity:0.25;transition:opacity 0.2s;
+}
+.track-row:hover .track-wave,.track-row.playing .track-wave{opacity:1}
+.tw-bar{
+  flex:1;background:var(--accent);border-radius:1px;
+  transform-origin:center;
+}
+.track-row.playing .tw-bar{animation:waveAnim 0.8s ease-in-out infinite}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;padding:1.5rem 3rem}
+.ft-copy{font-size:0.55rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink3)}
+.ft-sig{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.9rem;color:var(--ink3)}
+
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<div class="cur" id="cur"></div>
+<div class="cur-ring" id="ring"></div>
+
+<nav>
+  <a href="../index.html" class="nav-back glitch">
+    ← Retour
+    <span class="gl" aria-hidden="true">← Retour</span>
+    <span class="glb" aria-hidden="true">← Retour</span>
+  </a>
+  <a href="../index.html" class="nav-logo glitch">
+    Mickaël Pilon
+    <span class="gl" aria-hidden="true">Mickaël Pilon</span>
+    <span class="glb" aria-hidden="true">Mickaël Pilon</span>
+  </a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-wave" id="wave"></div>
+  <p class="hero-eyebrow">Catalogue · Extraits · 30 secondes</p>
+  <h1 class="hero-title">Musique &amp;<br><em>sound design</em></h1>
+  <p class="hero-sub">Extraits de compositions disponibles pour projets audiovisuels, installations, films et jeux vidéo. Chaque extrait dure environ 30 secondes.</p>
+</section>
+
+<!-- FILTRES -->
+<div class="filters" id="filters">
+  <button class="filter-btn active" data-cat="all">Tout</button>
+  <button class="filter-btn" data-cat="variete">Variété</button>
+  <button class="filter-btn" data-cat="electronique">Électronique</button>
+  <button class="filter-btn" data-cat="acoustique">Acoustique</button>
+  <button class="filter-btn" data-cat="experimental">Expérimental</button>
+</div>
+
+<!-- CATALOGUE -->
+<div class="catalogue" id="catalogue">
+
+  <!-- VARIÉTÉ -->
+  <div class="cat-section" data-cat="variete">
+    <div class="cat-header">
+      <h2 class="cat-title">Variété</h2>
+      <span class="cat-count">7 extraits</span>
+    </div>
+    <div class="track-list">
+      <div class="track-row" data-src="../extraits%20audios/medieval.mp3"><span class="track-num">01</span><div class="track-info"><button class="track-play-btn"><div class="t-play-icon"></div><div class="t-pause-icon"><div class="t-pause-bar"></div><div class="t-pause-bar"></div></div></button></div><div class="track-title glitch">Medieval<span class="gl" aria-hidden="true">Medieval</span><span class="glb" aria-hidden="true">Medieval</span></div><div class="track-wave"></div><div class="track-progress-wrap"><div class="track-progress-bar"></div></div><span class="track-dur">—</span></div>
+      <div class="track-row" data-src="../extraits%20audios/leave.mp3"><span class="track-num">02</span><div class="track-info"><button class="track-play-btn"><div class="t-play-icon"></div><div class="t-pause-icon"><div class="t-pause-bar"></div><div class="t-pause-bar"></div></div></button></div><div class="track-title glitch">Leave<span class="gl" aria-hidden="true">Leave</span><span class="glb" aria-hidden="true">Leave</span></div><div class="track-wave"></div><div class="track-progress-wrap"><div class="track-progress-bar"></div></div><span class="track-dur">—</span></div>
+      <div class="track-row" data-src="../extraits%20audios/chlorine.mp3"><span class="track-num">03</span><div class="track-info"><button class="track-play-btn"><div class="t-play-icon"></div><div class="t-pause-icon"><div class="t-pause-bar"></div><div class="t-pause-bar"></div></div></button></div><div class="track-title glitch">Chlorine<span class="gl" aria-hidden="true">Chlorine</span><span class="glb" aria-hidden="true">Chlorine</span></div><div class="track-wave"></div><div class="track-progress-wrap"><div class="track-progress-bar"></div></div><span class="track-dur">—</span></div>
+      <div class="track-row" data-src="../extraits%20audios/villain.mp3"><span class="track-num">04</span><div class="track-info"><button class="track-play-btn"><div class="t-play-icon"></div><div class="t-pause-icon"><div class="t-pause-bar"></div><div class="t-pause-bar"></div></div></button></div><div class="track-title glitch">Villain<span class="gl" aria-hidden="true">Villain</span><span class="glb" aria-hidden="true">Villain</span></div><div class="track-wave"></div><div class="track-progress-wrap"><div class="track-progress-bar"></div></div><span class="track-dur">—</span></div>
+      <div class="track-row" data-src="../extraits%20audios/ramona.mp3"><span class="track-num">05</span><div class="track-info"><button class="track-play-btn"><div class="t-play-icon"></div><div class="t-pause-icon"><div class="t-pause-bar"></div><div class="t-pause-bar"></div></div></button></div><div class="track-title glitch">Ramona<span class="gl" aria-hidden="true">Ramona</span><span class="glb" aria-hidden="true">Ramona</span></div><div class="track-wave"></div><div class="track-progress-wrap"><div class="track-progress-bar"></div></div><span class="track-dur">—</span></div>
+      <div class="track-row" data-src="../extraits%20audios/sleep_louder.mp3"><span class="track-num">06</span><div class="track-info"><button class="track-play-btn"><div class="t-play-icon"></div><div class="t-pause-icon"><div class="t-pause-bar"></div><div class="t-pause-bar"></div></div></button></div><div class="track-title glitch">Sleep Louder<span class="gl" aria-hidden="true">Sleep Louder</span><span class="glb" aria-hidden="true">Sleep Louder</span></div><div class="track-wave"></div><div class="track-progress-wrap"><div class="track-progress-bar"></div></div><span class="track-dur">—</span></div>
+      <div class="track-row" data-src="../extraits%20audios/mine.mp3"><span class="track-num">07</span><div class="track-info"><button class="track-play-btn"><div class="t-play-icon"></div><div class="t-pause-icon"><div class="t-pause-bar"></div><div class="t-pause-bar"></div></div></button></div><div class="track-title glitch">Mine<span class="gl" aria-hidden="true">Mine</span><span class="glb" aria-hidden="true">Mine</span></div><div class="track-wave"></div><div class="track-progress-wrap"><div class="track-progress-bar"></div></div><span class="track-dur">—</span></div>
+    </div>
+  </div>
+
+  <!-- ÉLECTRONIQUE -->
+  <div class="cat-section" data-cat="electronique">
+    <div class="cat-header">
+      <h2 class="cat-title">Électronique</h2>
+      <span class="cat-count">4 extraits</span>
+    </div>
+    <div class="track-list">
+      <div class="track-row" data-src="../extraits%20audios/technoEx.mp3"><span class="track-num">01</span><div class="track-info"><button class="track-play-btn"><div class="t-play-icon"></div><div class="t-pause-icon"><div class="t-pause-bar"></div><div class="t-pause-bar"></div></div></button></div><div class="track-title glitch">TechnoEx<span class="gl" aria-hidden="true">TechnoEx</span><span class="glb" aria-hidden="true">TechnoEx</span></div><div class="track-wave"></div><div class="track-progress-wrap"><div class="track-progress-bar"></div></div><span class="track-dur">—</span></div>
+      <div class="track-row" data-src="../extraits%20audios/houseEx.mp3"><span class="track-num">02</span><div class="track-info"><button class="track-play-btn"><div class="t-play-icon"></div><div class="t-pause-icon"><div class="t-pause-bar"></div><div class="t-pause-bar"></div></div></button></div><div class="track-title glitch">HouseEx<span class="gl" aria-hidden="true">HouseEx</span><span class="glb" aria-hidden="true">HouseEx</span></div><div class="track-wave"></div><div class="track-progress-wrap"><div class="track-progress-bar"></div></div><span class="track-dur">—</span></div>
+      <div class="track-row" data-src="../extraits%20audios/DnBEx.mp3"><span class="track-num">03</span><div class="track-info"><button class="track-play-btn"><div class="t-play-icon"></div><div class="t-pause-icon"><div class="t-pause-bar"></div><div class="t-pause-bar"></div></div></button></div><div class="track-title glitch">DnBEx<span class="gl" aria-hidden="true">DnBEx</span><span class="glb" aria-hidden="true">DnBEx</span></div><div class="track-wave"></div><div class="track-progress-wrap"><div class="track-progress-bar"></div></div><span class="track-dur">—</span></div>
+      <div class="track-row" data-src="../extraits%20audios/industrial.mp3"><span class="track-num">04</span><div class="track-info"><button class="track-play-btn"><div class="t-play-icon"></div><div class="t-pause-icon"><div class="t-pause-bar"></div><div class="t-pause-bar"></div></div></button></div><div class="track-title glitch">Industrial<span class="gl" aria-hidden="true">Industrial</span><span class="glb" aria-hidden="true">Industrial</span></div><div class="track-wave"></div><div class="track-progress-wrap"><div class="track-progress-bar"></div></div><span class="track-dur">—</span></div>
+    </div>
+  </div>
+
+  <!-- ACOUSTIQUE -->
+  <div class="cat-section" data-cat="acoustique">
+    <div class="cat-header">
+      <h2 class="cat-title">Acoustique</h2>
+      <span class="cat-count">5 extraits</span>
+    </div>
+    <div class="track-list">
+      <div class="track-row" data-src="../extraits%20audios/longing.mp3"><span class="track-num">01</span><div class="track-info"><button class="track-play-btn"><div class="t-play-icon"></div><div class="t-pause-icon"><div class="t-pause-bar"></div><div class="t-pause-bar"></div></div></button></div><div class="track-title glitch">Longing<span class="gl" aria-hidden="true">Longing</span><span class="glb" aria-hidden="true">Longing</span></div><div class="track-wave"></div><div class="track-progress-wrap"><div class="track-progress-bar"></div></div><span class="track-dur">—</span></div>
+      <div class="track-row" data-src="../extraits%20audios/vice.mp3"><span class="track-num">02</span><div class="track-info"><button class="track-play-btn"><div class="t-play-icon"></div><div class="t-pause-icon"><div class="t-pause-bar"></div><div class="t-pause-bar"></div></div></button></div><div class="track-title glitch">Vice<span class="gl" aria-hidden="true">Vice</span><span class="glb" aria-hidden="true">Vice</span></div><div class="track-wave"></div><div class="track-progress-wrap"><div class="track-progress-bar"></div></div><span class="track-dur">—</span></div>
+      <div class="track-row" data-src="../extraits%20audios/fool.mp3"><span class="track-num">03</span><div class="track-info"><button class="track-play-btn"><div class="t-play-icon"></div><div class="t-pause-icon"><div class="t-pause-bar"></div><div class="t-pause-bar"></div></div></button></div><div class="track-title glitch">Fool<span class="gl" aria-hidden="true">Fool</span><span class="glb" aria-hidden="true">Fool</span></div><div class="track-wave"></div><div class="track-progress-wrap"><div class="track-progress-bar"></div></div><span class="track-dur">—</span></div>
+      <div class="track-row" data-src="../extraits%20audios/storm.mp3"><span class="track-num">04</span><div class="track-info"><button class="track-play-btn"><div class="t-play-icon"></div><div class="t-pause-icon"><div class="t-pause-bar"></div><div class="t-pause-bar"></div></div></button></div><div class="track-title glitch">Storm<span class="gl" aria-hidden="true">Storm</span><span class="glb" aria-hidden="true">Storm</span></div><div class="track-wave"></div><div class="track-progress-wrap"><div class="track-progress-bar"></div></div><span class="track-dur">—</span></div>
+      <div class="track-row" data-src="../extraits%20audios/backseat.mp3"><span class="track-num">05</span><div class="track-info"><button class="track-play-btn"><div class="t-play-icon"></div><div class="t-pause-icon"><div class="t-pause-bar"></div><div class="t-pause-bar"></div></div></button></div><div class="track-title glitch">Backseat<span class="gl" aria-hidden="true">Backseat</span><span class="glb" aria-hidden="true">Backseat</span></div><div class="track-wave"></div><div class="track-progress-wrap"><div class="track-progress-bar"></div></div><span class="track-dur">—</span></div>
+    </div>
+  </div>
+
+  <!-- EXPÉRIMENTAL -->
+  <div class="cat-section" data-cat="experimental">
+    <div class="cat-header">
+      <h2 class="cat-title">Expérimental</h2>
+      <span class="cat-count">2 extraits</span>
+    </div>
+    <div class="track-list">
+      <div class="track-row" data-src="../extraits%20audios/experiment_number1.mp3"><span class="track-num">01</span><div class="track-info"><button class="track-play-btn"><div class="t-play-icon"></div><div class="t-pause-icon"><div class="t-pause-bar"></div><div class="t-pause-bar"></div></div></button></div><div class="track-title glitch">Experiment No.1<span class="gl" aria-hidden="true">Experiment No.1</span><span class="glb" aria-hidden="true">Experiment No.1</span></div><div class="track-wave"></div><div class="track-progress-wrap"><div class="track-progress-bar"></div></div><span class="track-dur">—</span></div>
+      <div class="track-row" data-src="../extraits%20audios/experiment_number2.mp3"><span class="track-num">02</span><div class="track-info"><button class="track-play-btn"><div class="t-play-icon"></div><div class="t-pause-icon"><div class="t-pause-bar"></div><div class="t-pause-bar"></div></div></button></div><div class="track-title glitch">Experiment No.2<span class="gl" aria-hidden="true">Experiment No.2</span><span class="glb" aria-hidden="true">Experiment No.2</span></div><div class="track-wave"></div><div class="track-progress-wrap"><div class="track-progress-bar"></div></div><span class="track-dur">—</span></div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <p class="ft-copy">© 2025 Mickaël Pilon — Tous droits réservés</p>
+  <p class="ft-sig">Mickaël Pilon</p>
+</footer>
+
+<script>
+// CURSOR
+const cur=document.getElementById('cur'),ring=document.getElementById('ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px'});
+(function loop(){rx+=(mx-rx)*0.1;ry+=(my-ry)*0.1;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(loop)})();
+
+// WAVEFORM HERO
+const wave=document.getElementById('wave');
+for(let i=0;i<80;i++){
+  const b=document.createElement('div');b.className='wbar';
+  const h=8+Math.abs(Math.sin(i*0.25))*30+Math.random()*15;
+  b.style.height=h+'px';
+  b.style.animationDelay=(i*0.035)+'s';
+  b.style.animationDuration=(1.4+Math.random()*1.2)+'s';
+  wave.appendChild(b);
+}
+
+// BUILD MINI WAVEFORMS
+document.querySelectorAll('.track-wave').forEach(wv=>{
+  for(let i=0;i<24;i++){
+    const b=document.createElement('div');b.className='tw-bar';
+    const h=3+Math.abs(Math.sin(i*0.4+Math.random()))*16+Math.random()*6;
+    b.style.height=h+'px';
+    b.style.animationDelay=(i*0.06)+'s';
+    b.style.animationDuration=(0.5+Math.random()*0.4)+'s';
+    wv.appendChild(b);
+  }
+});
+
+// AUDIO PLAYER
+let currentAudio=null;
+let currentRow=null;
+
+function fmt(s){
+  if(!s||isNaN(s))return'—';
+  const m=Math.floor(s/60);const sec=Math.floor(s%60);
+  return m+':'+(sec<10?'0':'')+sec;
+}
+
+function stopCurrent(){
+  if(currentAudio){
+    currentAudio.pause();
+    currentAudio.currentTime=0;
+  }
+  if(currentRow){
+    currentRow.classList.remove('playing');
+    const pi=currentRow.querySelector('.t-play-icon');
+    const pau=currentRow.querySelector('.t-pause-icon');
+    if(pi)pi.style.display='block';
+    if(pau)pau.style.display='none';
+    const pb=currentRow.querySelector('.track-progress-bar');
+    if(pb)pb.style.width='0%';
+  }
+  currentAudio=null;currentRow=null;
+}
+
+document.querySelectorAll('.track-row').forEach(row=>{
+  const src=row.dataset.src;
+  const btn=row.querySelector('.track-play-btn');
+  const playIcon=row.querySelector('.t-play-icon');
+  const pauseIcon=row.querySelector('.t-pause-icon');
+  const progressBar=row.querySelector('.track-progress-bar');
+  const progressWrap=row.querySelector('.track-progress-wrap');
+  const durEl=row.querySelector('.track-dur');
+
+  const audio=new Audio();
+  audio.preload='none';
+  audio.src=src;
+
+  audio.addEventListener('loadedmetadata',()=>{durEl.textContent=fmt(audio.duration)});
+  audio.addEventListener('timeupdate',()=>{
+    if(!audio.duration)return;
+    progressBar.style.width=((audio.currentTime/audio.duration)*100)+'%';
+  });
+  audio.addEventListener('ended',()=>{
+    row.classList.remove('playing');
+    playIcon.style.display='block';
+    pauseIcon.style.display='none';
+    progressBar.style.width='0%';
+    currentAudio=null;currentRow=null;
+  });
+
+  progressWrap.addEventListener('click',e=>{
+    if(!audio.duration)return;
+    const rect=progressWrap.getBoundingClientRect();
+    audio.currentTime=((e.clientX-rect.left)/rect.width)*audio.duration;
+  });
+
+  btn.addEventListener('click',()=>{
+    if(currentAudio===audio){
+      // pause current
+      audio.pause();
+      row.classList.remove('playing');
+      playIcon.style.display='block';
+      pauseIcon.style.display='none';
+      currentAudio=null;currentRow=null;
+    } else {
+      stopCurrent();
+      audio.play();
+      row.classList.add('playing');
+      playIcon.style.display='none';
+      pauseIcon.style.display='flex';
+      currentAudio=audio;currentRow=row;
+    }
+  });
+
+  // cursor
+  row.addEventListener('mouseenter',()=>ring.classList.add('big'));
+  row.addEventListener('mouseleave',()=>ring.classList.remove('big'));
+});
+
+// FILTRES
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+  btn.addEventListener('mouseenter',()=>ring.classList.add('big'));
+  btn.addEventListener('mouseleave',()=>ring.classList.remove('big'));
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const cat=btn.dataset.cat;
+    document.querySelectorAll('.cat-section').forEach(sec=>{
+      if(cat==='all'||sec.dataset.cat===cat){sec.classList.remove('hidden')}
+      else{sec.classList.add('hidden');
+        // stop audio if playing in hidden section
+        sec.querySelectorAll('.track-row.playing').forEach(r=>{
+          stopCurrent();
+        });
+      }
+    });
+  });
+});
+
+document.querySelectorAll('a').forEach(el=>{
+  el.addEventListener('mouseenter',()=>ring.classList.add('big'));
+  el.addEventListener('mouseleave',()=>ring.classList.remove('big'));
+});
+</script>
+</body>
+</html>

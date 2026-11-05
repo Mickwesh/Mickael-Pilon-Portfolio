@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Production — Mickaël Pilon</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Syne:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a08;
+  --surface:#111110;
+  --ink:#e8e4da;
+  --ink2:#9a9690;
+  --ink3:#5a5852;
+  --accent:#c4a96e;
+  --accent2:#7a9e7e;
+  --border:rgba(196,169,110,0.12);
+  --border2:rgba(196,169,110,0.22);
+  --r:#ff2d55;
+  --b:#0088ff;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:'Syne',sans-serif;overflow-x:hidden;cursor:none}
+
+.cur{position:fixed;width:6px;height:6px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%)}
+.cur-ring{position:fixed;width:28px;height:28px;border:1px solid rgba(196,169,110,0.35);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width 0.3s,height 0.3s,border-color 0.3s}
+.cur-ring.big{width:48px;height:48px;border-color:rgba(196,169,110,0.6)}
+
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:500;opacity:0.035;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+@keyframes gh1{0%,100%{clip-path:inset(100% 0 0 0);transform:translate(0)}20%{clip-path:inset(18% 0 58% 0);transform:translate(-5px,0)}40%{clip-path:inset(62% 0 10% 0);transform:translate(4px,0)}60%{clip-path:inset(35% 0 42% 0);transform:translate(-3px,0)}80%{clip-path:inset(5% 0 78% 0);transform:translate(6px,0)}}
+@keyframes gh2{0%,100%{clip-path:inset(100% 0 0 0);transform:translate(0)}25%{clip-path:inset(44% 0 28% 0);transform:translate(5px,0)}50%{clip-path:inset(8% 0 72% 0);transform:translate(-4px,0)}75%{clip-path:inset(70% 0 5% 0);transform:translate(3px,0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes waveAnim{0%,100%{transform:scaleY(0.2)}50%{transform:scaleY(1)}}
+
+.glitch{position:relative;display:inline-block}
+.glitch .gl,.glitch .glb{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity 0.05s}
+.glitch .gl{color:var(--r)}
+.glitch .glb{color:var(--b)}
+.glitch:hover .gl{opacity:0.9;animation:gh1 0.45s steps(1) infinite}
+.glitch:hover .glb{opacity:0.75;animation:gh2 0.45s steps(1) infinite 0.07s}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:300;display:flex;justify-content:space-between;align-items:center;padding:1.4rem 3rem;background:rgba(10,10,8,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;letter-spacing:0.08em;color:var(--ink);text-decoration:none}
+.nav-logo .gl,.nav-logo .glb{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;letter-spacing:0.08em}
+.nav-back{font-size:0.62rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--ink3);text-decoration:none;display:flex;align-items:center;gap:0.6rem;transition:color 0.25s}
+.nav-back:hover{color:var(--accent)}
+.nav-back .gl,.nav-back .glb{font-size:0.62rem;letter-spacing:0.22em;text-transform:uppercase}
+
+/* HERO */
+#hero{padding:5rem 3rem 4rem;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.hero-wave{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:60%;height:80px;opacity:0.07;display:flex;align-items:center;gap:2px;pointer-events:none}
+.wbar{flex:1;background:var(--accent);border-radius:1px;transform-origin:center;animation:waveAnim 2s ease-in-out infinite}
+.hero-eyebrow{font-size:0.6rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--accent);margin-bottom:1.5rem;opacity:0;animation:fadeUp 0.9s ease forwards 0.2s}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(3.5rem,8vw,6rem);font-weight:300;line-height:0.95;opacity:0;animation:fadeUp 0.9s ease forwards 0.4s}
+.hero-title em{font-style:italic;color:var(--accent)}
+.hero-sub{font-size:0.8rem;color:var(--ink2);line-height:1.8;max-width:480px;margin-top:2rem;opacity:0;animation:fadeUp 0.9s ease forwards 0.6s}
+
+/* CATALOGUE */
+.catalogue{padding:0 3rem 5rem}
+
+/* RELEASE ROW */
+.release{
+  display:grid;
+  grid-template-columns:56px 180px 1fr auto;
+  align-items:center;gap:2rem;
+  padding:2rem 0;
+  border-bottom:1px solid var(--border);
+  position:relative;
+}
+.release::before{content:'';position:absolute;left:-3rem;top:0;bottom:0;width:2px;background:var(--accent);transform:scaleY(0);transition:transform 0.25s}
+.release:hover::before,.release.playing::before{transform:scaleY(1)}
+.release:hover,.release.playing{background:rgba(196,169,110,0.02)}
+
+/* PLAY BTN */
+.rel-play-btn{
+  width:40px;height:40px;border:1px solid var(--border2);border-radius:50%;
+  background:none;cursor:none;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:border-color 0.2s,background 0.2s;
+}
+.rel-play-btn:hover,.release.playing .rel-play-btn{border-color:var(--accent);background:rgba(196,169,110,0.08)}
+.r-play-icon{width:0;height:0;border-style:solid;border-width:6px 0 6px 10px;border-color:transparent transparent transparent var(--ink);margin-left:3px}
+.r-pause-icon{display:none;gap:3px;align-items:center}
+.r-pause-bar{width:2px;height:12px;background:var(--ink)}
+
+/* COVER */
+.rel-cover{
+  width:100%;aspect-ratio:1;background:var(--surface);
+  border:1px solid var(--border);overflow:hidden;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+.rel-cover img{width:100%;height:100%;object-fit:cover;display:block}
+.cover-placeholder{font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--ink3)}
+
+/* INFO */
+.rel-info{}
+.rel-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:400;margin-bottom:0.2rem}
+.rel-title .gl,.rel-title .glb{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:400}
+.rel-artist{font-size:0.7rem;letter-spacing:0.1em;color:var(--ink2);margin-bottom:0.5rem}
+.rel-tags{display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:1rem}
+.rel-tag{font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;padding:0.25rem 0.6rem;border:1px solid var(--border2);color:var(--ink3)}
+.rel-progress-wrap{height:2px;background:var(--border2);cursor:pointer;position:relative;border-radius:1px;max-width:400px}
+.rel-progress-bar{height:100%;background:var(--accent);width:0%;border-radius:1px;transition:width 0.1s linear}
+.rel-time{font-size:0.55rem;letter-spacing:0.1em;color:var(--ink3);margin-top:0.4rem;display:flex;gap:1rem}
+
+/* LINKS */
+.rel-links{display:flex;flex-direction:column;gap:0.5rem;flex-shrink:0}
+.platform-link{
+  display:flex;align-items:center;gap:0.6rem;
+  font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;
+  color:var(--ink3);text-decoration:none;
+  padding:0.5rem 0.8rem;border:1px solid var(--border);
+  transition:border-color 0.2s,color 0.2s;white-space:nowrap;
+}
+.platform-link:hover{border-color:var(--accent);color:var(--accent)}
+.platform-icon{font-size:0.7rem}
+
+/* SECTION HEADER */
+.sec-header{display:flex;align-items:center;justify-content:space-between;padding:1.5rem 0;border-bottom:1px solid var(--border);margin-bottom:0}
+.sec-label{font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--ink2)}
+.sec-count{font-size:0.55rem;letter-spacing:0.15em;color:var(--ink3)}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;padding:1.5rem 3rem}
+.ft-copy{font-size:0.55rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink3)}
+.ft-sig{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.9rem;color:var(--ink3)}
+</style>
+</head>
+<body>
+
+<div class="cur" id="cur"></div>
+<div class="cur-ring" id="ring"></div>
+
+<nav>
+  <a href="../index.html" class="nav-back glitch">
+    ← Retour
+    <span class="gl" aria-hidden="true">← Retour</span>
+    <span class="glb" aria-hidden="true">← Retour</span>
+  </a>
+  <a href="../index.html" class="nav-logo glitch">
+    Mickaël Pilon
+    <span class="gl" aria-hidden="true">Mickaël Pilon</span>
+    <span class="glb" aria-hidden="true">Mickaël Pilon</span>
+  </a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-wave" id="wave"></div>
+  <p class="hero-eyebrow">LOPASS Studio · Productions · Sorties</p>
+  <h1 class="hero-title">Production<br><em>pour artistes</em></h1>
+  <p class="hero-sub">Chansons produites au studio LOPASS. Extraits de 30 secondes — écoute directe ou lien vers les plateformes.</p>
+</section>
+
+<!-- CATALOGUE -->
+<div class="catalogue">
+  <div class="sec-header">
+    <span class="sec-label">Sorties</span>
+    <span class="sec-count">2 chansons</span>
+  </div>
+
+  <!-- ══ SWEET LONGING ══ -->
+  <div class="release" data-src="../extraits%20audios/sweet_longing.mp3">
+    <button class="rel-play-btn" aria-label="Lecture / Pause">
+      <div class="r-play-icon"></div>
+      <div class="r-pause-icon"><div class="r-pause-bar"></div><div class="r-pause-bar"></div></div>
+    </button>
+    <div class="rel-cover">
+      <img src="../images/Sweet_Longing_art.png" alt="Sweet Longing — Kristell" style="width:100%;height:100%;object-fit:cover;display:block">
+    </div>
+    <div class="rel-info">
+      <div class="rel-title glitch">
+        Sweet Longing
+        <span class="gl" aria-hidden="true">Sweet Longing</span>
+        <span class="glb" aria-hidden="true">Sweet Longing</span>
+      </div>
+      <p class="rel-artist">Kristell · Produit par Mickaël Pilon</p>
+      <div class="rel-tags">
+        <span class="rel-tag">Pop</span>
+        <span class="rel-tag">Production</span>
+        <span class="rel-tag">LOPASS Studio</span>
+        <span class="rel-tag">2025</span>
+      </div>
+      <div class="rel-progress-wrap">
+        <div class="rel-progress-bar"></div>
+      </div>
+      <div class="rel-time">
+        <span class="rel-elapsed">0:00</span>
+        <span class="rel-dur">—</span>
+      </div>
+    </div>
+    <div class="rel-links">
+      <a href="https://open.spotify.com/intl-fr/track/6QmArgCB6x3d40ahDqDeTB" target="_blank" class="platform-link">
+        <span class="platform-icon">♫</span> Spotify
+      </a>
+      <a href="https://music.apple.com/us/song/sweet-longing/6797802976" target="_blank" class="platform-link">
+        <span class="platform-icon">♫</span> Apple Music
+      </a>
+    </div>
+  </div>
+
+  <!-- ══ ON NE SE PARLE PLUS ══ -->
+  <div class="release" data-src="../extraits%20audios/on_ne_se_parle_plus.mp3">
+    <button class="rel-play-btn" aria-label="Lecture / Pause">
+      <div class="r-play-icon"></div>
+      <div class="r-pause-icon"><div class="r-pause-bar"></div><div class="r-pause-bar"></div></div>
+    </button>
+    <div class="rel-cover">
+      <img src="../images/on_ne_se_parle_plus_cover.png" alt="On ne se parle plus — Meloire" style="width:100%;height:100%;object-fit:cover;display:block">
+    </div>
+    <div class="rel-info">
+      <div class="rel-title glitch">
+        On ne se parle plus
+        <span class="gl" aria-hidden="true">On ne se parle plus</span>
+        <span class="glb" aria-hidden="true">On ne se parle plus</span>
+      </div>
+      <p class="rel-artist">Meloire · Bridge &amp; synthétiseurs produits par Mickaël Pilon</p>
+      <div class="rel-tags">
+        <span class="rel-tag">Pop</span>
+        <span class="rel-tag">Production partielle</span>
+        <span class="rel-tag">LOPASS Studio</span>
+        <span class="rel-tag">2025</span>
+      </div>
+      <div class="rel-progress-wrap">
+        <div class="rel-progress-bar"></div>
+      </div>
+      <div class="rel-time">
+        <span class="rel-elapsed">0:00</span>
+        <span class="rel-dur">—</span>
+      </div>
+    </div>
+    <div class="rel-links">
+      <a href="https://open.spotify.com/intl-fr/track/1XzSO3ktwQWqAsibRKve4Y" target="_blank" class="platform-link">
+        <span class="platform-icon">♫</span> Spotify
+      </a>
+      <a href="https://music.apple.com/us/album/on-ne-se-parle-plus/1886803985?i=1886803992" target="_blank" class="platform-link">
+        <span class="platform-icon">♫</span> Apple Music
+      </a>
+    </div>
+  </div>
+
+  <!-- Pour ajouter une chanson, copie le bloc ci-dessus et modifie :
+       - data-src="../extraits%20audios/nom_du_fichier.mp3"
+       - Le titre, l'artiste, les tags
+       - Les liens Spotify / Apple Music / SoundCloud -->
+
+</div>
+
+<footer>
+  <p class="ft-copy">© 2025 Mickaël Pilon — Tous droits réservés</p>
+  <p class="ft-sig">Mickaël Pilon</p>
+</footer>
+
+<script>
+// CURSOR
+const cur=document.getElementById('cur'),ring=document.getElementById('ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px'});
+(function loop(){rx+=(mx-rx)*0.1;ry+=(my-ry)*0.1;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(loop)})();
+
+// WAVEFORM HERO
+const wave=document.getElementById('wave');
+for(let i=0;i<80;i++){
+  const b=document.createElement('div');b.className='wbar';
+  const h=8+Math.abs(Math.sin(i*0.25))*30+Math.random()*15;
+  b.style.height=h+'px';
+  b.style.animationDelay=(i*0.035)+'s';
+  b.style.animationDuration=(1.4+Math.random()*1.2)+'s';
+  wave.appendChild(b);
+}
+
+// AUDIO
+let currentAudio=null,currentRelease=null;
+function fmt(s){if(!s||isNaN(s))return'—';const m=Math.floor(s/60);const sec=Math.floor(s%60);return m+':'+(sec<10?'0':'')+sec}
+
+function stopCurrent(){
+  if(currentAudio){currentAudio.pause();currentAudio.currentTime=0}
+  if(currentRelease){
+    currentRelease.classList.remove('playing');
+    currentRelease.querySelector('.r-play-icon').style.display='block';
+    currentRelease.querySelector('.r-pause-icon').style.display='none';
+    currentRelease.querySelector('.rel-progress-bar').style.width='0%';
+  }
+  currentAudio=null;currentRelease=null;
+}
+
+document.querySelectorAll('.release').forEach(rel=>{
+  const src=rel.dataset.src;
+  const btn=rel.querySelector('.rel-play-btn');
+  const playIcon=rel.querySelector('.r-play-icon');
+  const pauseIcon=rel.querySelector('.r-pause-icon');
+  const progressBar=rel.querySelector('.rel-progress-bar');
+  const progressWrap=rel.querySelector('.rel-progress-wrap');
+  const elapsed=rel.querySelector('.rel-elapsed');
+  const durEl=rel.querySelector('.rel-dur');
+
+  const audio=new Audio();
+  audio.preload='none';
+  audio.src=src;
+
+  audio.addEventListener('loadedmetadata',()=>{durEl.textContent=fmt(audio.duration)});
+  audio.addEventListener('timeupdate',()=>{
+    if(!audio.duration)return;
+    progressBar.style.width=((audio.currentTime/audio.duration)*100)+'%';
+    elapsed.textContent=fmt(audio.currentTime);
+  });
+  audio.addEventListener('ended',()=>{
+    rel.classList.remove('playing');
+    playIcon.style.display='block';pauseIcon.style.display='none';
+    progressBar.style.width='0%';elapsed.textContent='0:00';
+    currentAudio=null;currentRelease=null;
+  });
+
+  progressWrap.addEventListener('click',e=>{
+    if(!audio.duration)return;
+    const rect=progressWrap.getBoundingClientRect();
+    audio.currentTime=((e.clientX-rect.left)/rect.width)*audio.duration;
+  });
+
+  btn.addEventListener('click',()=>{
+    if(currentAudio===audio){
+      audio.pause();rel.classList.remove('playing');
+      playIcon.style.display='block';pauseIcon.style.display='none';
+      currentAudio=null;currentRelease=null;
+    } else {
+      stopCurrent();
+      audio.play();rel.classList.add('playing');
+      playIcon.style.display='none';pauseIcon.style.display='flex';
+      currentAudio=audio;currentRelease=rel;
+    }
+  });
+
+  rel.querySelectorAll('a,button').forEach(el=>{
+    el.addEventListener('mouseenter',()=>ring.classList.add('big'));
+    el.addEventListener('mouseleave',()=>ring.classList.remove('big'));
+  });
+});
+
+document.querySelectorAll('a').forEach(el=>{
+  el.addEventListener('mouseenter',()=>ring.classList.add('big'));
+  el.addEventListener('mouseleave',()=>ring.classList.remove('big'));
+});
+</script>
+</body>
+</html>

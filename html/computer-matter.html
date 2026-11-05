@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Computer Matter — Mickaël Pilon</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Syne:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a08;
+  --surface:#111110;
+  --ink:#e8e4da;
+  --ink2:#9a9690;
+  --ink3:#5a5852;
+  --accent:#c4a96e;
+  --accent2:#7a9e7e;
+  --border:rgba(196,169,110,0.12);
+  --border2:rgba(196,169,110,0.22);
+  --r:#ff2d55;
+  --b:#0088ff;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:'Syne',sans-serif;overflow-x:hidden;cursor:none}
+
+.cur{position:fixed;width:6px;height:6px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%)}
+.cur-ring{position:fixed;width:28px;height:28px;border:1px solid rgba(196,169,110,0.35);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width 0.3s,height 0.3s,border-color 0.3s}
+.cur-ring.big{width:48px;height:48px;border-color:rgba(196,169,110,0.6)}
+
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:500;opacity:0.035;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+@keyframes gh1{0%,100%{clip-path:inset(100% 0 0 0);transform:translate(0)}20%{clip-path:inset(18% 0 58% 0);transform:translate(-5px,0)}40%{clip-path:inset(62% 0 10% 0);transform:translate(4px,0)}60%{clip-path:inset(35% 0 42% 0);transform:translate(-3px,0)}80%{clip-path:inset(5% 0 78% 0);transform:translate(6px,0)}}
+@keyframes gh2{0%,100%{clip-path:inset(100% 0 0 0);transform:translate(0)}25%{clip-path:inset(44% 0 28% 0);transform:translate(5px,0)}50%{clip-path:inset(8% 0 72% 0);transform:translate(-4px,0)}75%{clip-path:inset(70% 0 5% 0);transform:translate(3px,0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes waveAnim{0%,100%{transform:scaleY(0.25)}50%{transform:scaleY(1)}}
+@keyframes pulseRing{0%{transform:translate(-50%,-50%) scale(1);opacity:0.6}100%{transform:translate(-50%,-50%) scale(2.2);opacity:0}}
+@keyframes blinkDot{0%,49%{opacity:1}50%,100%{opacity:0}}
+@keyframes scrollDrop{0%,100%{opacity:0.2;transform:scaleY(0.7)}50%{opacity:1;transform:scaleY(1)}}
+
+.glitch{position:relative;display:inline-block}
+.glitch .gl,.glitch .glb{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity 0.05s}
+.glitch .gl{color:var(--r)}
+.glitch .glb{color:var(--b)}
+.glitch:hover .gl{opacity:0.9;animation:gh1 0.45s steps(1) infinite}
+.glitch:hover .glb{opacity:0.75;animation:gh2 0.45s steps(1) infinite 0.07s}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:300;display:flex;justify-content:space-between;align-items:center;padding:1.4rem 3rem;background:rgba(10,10,8,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;letter-spacing:0.08em;color:var(--ink);text-decoration:none}
+.nav-logo .gl,.nav-logo .glb{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;letter-spacing:0.08em}
+.nav-back{font-size:0.62rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--ink3);text-decoration:none;display:flex;align-items:center;gap:0.6rem;transition:color 0.25s}
+.nav-back:hover{color:var(--accent)}
+.nav-back .gl,.nav-back .glb{font-size:0.62rem;letter-spacing:0.22em;text-transform:uppercase}
+
+/* HERO */
+#hero{min-height:72vh;display:flex;flex-direction:column;justify-content:flex-end;padding:4rem 3rem;position:relative;overflow:hidden;border-bottom:1px solid var(--border)}
+.hero-video-bg{position:absolute;inset:0;overflow:hidden}
+
+.hero-content{position:relative;z-index:1}
+.hero-index{font-size:0.6rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--accent);margin-bottom:1.5rem;opacity:0;animation:fadeUp 0.9s ease forwards 0.2s}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(4rem,10vw,7.5rem);font-weight:300;line-height:0.9;letter-spacing:-0.01em;opacity:0;animation:fadeUp 0.9s ease forwards 0.4s}
+.hero-title em{font-style:italic;color:var(--accent)}
+.hero-meta-row{display:flex;align-items:flex-end;justify-content:space-between;margin-top:3rem;flex-wrap:wrap;gap:1rem;opacity:0;animation:fadeUp 0.9s ease forwards 0.6s}
+.hero-tags{display:flex;flex-wrap:wrap;gap:0.5rem}
+.htag{font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.3rem 0.7rem;border:1px solid var(--border2);color:var(--ink2)}
+.hero-year{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink3)}
+
+/* EVENT BANNER */
+.event-banner{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1rem 3rem;
+  background:rgba(196,169,110,0.06);
+  border-bottom:1px solid var(--border2);
+  flex-wrap:wrap;gap:1rem;
+}
+.event-dot{width:6px;height:6px;background:var(--accent2);border-radius:50%;box-shadow:0 0 8px var(--accent2);animation:blinkDot 1.8s infinite;flex-shrink:0}
+.event-text{font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--ink2);display:flex;align-items:center;gap:0.75rem}
+.event-link{font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(196,169,110,0.3);padding-bottom:1px;transition:border-color 0.2s}
+.event-link:hover{border-color:var(--accent)}
+
+/* SECTIONS */
+section{border-top:1px solid var(--border)}
+.sec-header{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 3rem;border-bottom:1px solid var(--border)}
+.sec-index{font-size:0.55rem;letter-spacing:0.2em;color:var(--ink3)}
+.sec-label{font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--ink2)}
+
+/* DESCRIPTION */
+.desc-grid{display:grid;grid-template-columns:1fr 1.6fr}
+.desc-left{padding:3.5rem 3rem;border-right:1px solid var(--border)}
+.desc-right{padding:3.5rem 3rem}
+.desc-body{font-size:0.82rem;line-height:1.95;color:var(--ink2);margin-bottom:2.5rem}
+.spec-block{border-top:1px solid var(--border);padding-top:2rem}
+.spec-row{display:flex;justify-content:space-between;align-items:baseline;padding:0.7rem 0;border-bottom:1px solid var(--border);font-size:0.75rem}
+.spec-key{letter-spacing:0.12em;text-transform:uppercase;color:var(--ink3);font-size:0.6rem}
+.spec-val{color:var(--ink2);text-align:right;font-size:0.75rem}
+.parti-block{margin-top:2rem;padding:1.5rem;border:1px solid var(--border2);background:rgba(196,169,110,0.03)}
+.parti-label{font-size:0.55rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem}
+.parti-items{display:flex;flex-direction:column;gap:0.5rem}
+.parti-item{display:flex;align-items:center;gap:0.75rem;font-size:0.75rem;color:var(--ink2)}
+.pdot{width:3px;height:3px;border-radius:50%;background:var(--accent2);flex-shrink:0;display:inline-block}
+
+/* VIDEO */
+.video-inner{padding:3.5rem 3rem}
+.video-label{font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--accent);margin-bottom:2rem}
+.video-wrap{width:100%;max-width:960px;position:relative;background:var(--surface);border:1px solid var(--border)}
+.video-wrap video{width:100%;display:block}
+.video-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(10,10,8,0.55);cursor:none;transition:background 0.3s;flex-direction:column;gap:1rem}
+.video-overlay:hover{background:rgba(10,10,8,0.35)}
+.video-play-btn{width:72px;height:72px;border:1px solid rgba(196,169,110,0.5);border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;transition:border-color 0.2s}
+.video-play-btn::before{content:'';position:absolute;inset:-1px;border:1px solid rgba(196,169,110,0.2);border-radius:50%;animation:pulseRing 2s ease-out infinite}
+.video-play-btn:hover{border-color:var(--accent)}
+.video-tri{width:0;height:0;border-style:solid;border-width:12px 0 12px 20px;border-color:transparent transparent transparent var(--ink);margin-left:5px}
+.video-overlay.hidden{display:none}
+
+/* AUDIO */
+.audio-wrap{padding:3rem}
+.audio-label{font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--accent);margin-bottom:2rem}
+.audio-player{display:flex;align-items:center;gap:2rem;padding:2rem;border:1px solid var(--border);background:var(--surface);max-width:680px}
+.play-btn{width:52px;height:52px;border:1px solid var(--border2);background:none;cursor:none;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:border-color 0.2s,background 0.2s}
+.play-btn:hover{border-color:var(--accent);background:rgba(196,169,110,0.06)}
+.play-icon{width:0;height:0;border-style:solid;border-width:8px 0 8px 14px;border-color:transparent transparent transparent var(--ink);margin-left:3px}
+.pause-icon{display:none;gap:4px;align-items:center}
+.pause-bar{width:3px;height:16px;background:var(--ink)}
+.audio-info{flex:1;min-width:0}
+.audio-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:400;margin-bottom:0.25rem}
+.audio-meta{font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--ink3)}
+.progress-wrap{width:100%;height:2px;background:var(--border2);margin-top:1rem;cursor:pointer;position:relative}
+.progress-bar{height:100%;background:var(--accent);width:0%;transition:width 0.1s linear}
+.audio-time{font-size:0.6rem;letter-spacing:0.1em;color:var(--ink3);margin-top:0.5rem;display:flex;justify-content:space-between}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;padding:1.5rem 3rem}
+.ft-copy{font-size:0.55rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink3)}
+.ft-sig{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.9rem;color:var(--ink3)}
+
+.reveal{opacity:0;transform:translateY(22px);transition:opacity 0.8s ease,transform 0.8s ease}
+.reveal.on{opacity:1;transform:translateY(0)}
+
+/* YOUTUBE EMBED */
+.yt-wrap{position:relative;width:100%;max-width:960px;aspect-ratio:16/9;background:var(--surface);border:1px solid var(--border)}
+.yt-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+</style>
+</head>
+<body>
+
+<div class="cur" id="cur"></div>
+<div class="cur-ring" id="ring"></div>
+
+<nav>
+  <a href="../index.html" class="nav-back glitch">
+    ← Retour
+    <span class="gl" aria-hidden="true">← Retour</span>
+    <span class="glb" aria-hidden="true">← Retour</span>
+  </a>
+  <a href="../index.html" class="nav-logo glitch">
+    Mickaël Pilon
+    <span class="gl" aria-hidden="true">Mickaël Pilon</span>
+    <span class="glb" aria-hidden="true">Mickaël Pilon</span>
+  </a>
+</nav>
+
+<!-- HERO — vidéo en fond -->
+<section id="hero">
+  <div class="hero-video-bg" style="background:url('../images/computer_Matter_background.png') center/cover no-repeat;filter:brightness(0.22) saturate(0.6)"></div>
+  <div class="hero-content">
+    <p class="hero-index">003 — Mapping audio-réactif · MAPP MTL 2025</p>
+    <h1 class="hero-title"><em>Computer</em><br>Matter</h1>
+    <div class="hero-meta-row">
+      <div class="hero-tags">
+        <span class="htag">Mapping vidéo</span>
+        <span class="htag">Audio-réactif</span>
+        <span class="htag">Ableton Live</span>
+        <span class="htag">TouchDesigner</span>
+        <span class="htag">Techno déconstruite</span>
+      </div>
+      <span class="hero-year">2025</span>
+    </div>
+  </div>
+</section>
+
+<!-- EVENT BANNER -->
+<div class="event-banner">
+  <div class="event-text">
+    <span class="event-dot"></span>
+    Présenté le 1er octobre 2025 · MAPP MTL · Sous le pont Van Horne, Montréal
+  </div>
+  <a href="https://mappmtl.com" target="_blank" class="event-link">mappmtl.com ↗</a>
+</div>
+
+<!-- DESCRIPTION -->
+<section id="description">
+  <div class="sec-header">
+    <span class="sec-index">01</span>
+    <span class="sec-label">Description</span>
+  </div>
+  <div class="desc-grid">
+    <div class="desc-left reveal">
+      <div class="spec-block" style="border-top:none;padding-top:0">
+        <div class="spec-row"><span class="spec-key">Format</span><span class="spec-val">Mapping audio-réactif · 1 minute</span></div>
+        <div class="spec-row"><span class="spec-key">Collaboration</span><span class="spec-val">Axel Gervais</span></div>
+        <div class="spec-row"><span class="spec-key">Outils</span><span class="spec-val">Ableton Live · TouchDesigner</span></div>
+        <div class="spec-row"><span class="spec-key">Genre</span><span class="spec-val">Techno déconstruite</span></div>
+        <div class="spec-row"><span class="spec-key">Événement</span><span class="spec-val">MAPP MTL 2025</span></div>
+        <div class="spec-row"><span class="spec-key">Lieu</span><span class="spec-val">Pont Van Horne, Montréal</span></div>
+        <div class="spec-row"><span class="spec-key">Année</span><span class="spec-val">2025</span></div>
+      </div>
+      <div class="parti-block">
+        <p class="parti-label">Participation</p>
+        <div class="parti-items">
+          <div class="parti-item"><span class="pdot"></span>Composition sonore</div>
+          <div class="parti-item"><span class="pdot"></span>Sound design</div>
+          <div class="parti-item"><span class="pdot"></span>Intégration audio-réactive</div>
+        </div>
+      </div>
+    </div>
+    <div class="desc-right reveal">
+      <p class="desc-body">
+        <em>Computer Matter</em> est une minute de mapping vidéo audio-réactif réalisée en collaboration avec Axel Gervais, entièrement conçue sur Ableton Live et TouchDesigner. L'œuvre explore l'alliage entre nature et homme à travers des formes organiques aux textures brutalistes et métalliques — la matière vivante rencontre la rigueur de la machine.<br><br>
+        La composition sonore, réalisée par Mickaël Pilon, se qualifie de techno déconstruite : des structures rythmiques fragmentées, des textures industrielles et des éléments organiques qui guident et déforment les visuels en temps réel. Chaque impulsion sonore déclenche et module les formes projetées, créant une symbiose totale entre son et image.<br><br>
+        L'œuvre est présentée le 1er octobre 2025 lors de l'événement MAPP MTL, sous le pont Van Horne à Montréal.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- VIDÉO -->
+<section id="video-section">
+  <div class="sec-header">
+    <span class="sec-index">02</span>
+    <span class="sec-label">Captation vidéo</span>
+  </div>
+  <div class="video-inner reveal">
+    <p class="video-label">Mapping complet · 1 minute</p>
+    <div class="yt-wrap"><iframe src="https://www.youtube-nocookie.com/embed/DI-mPtkMwhw?rel=0" title="Computer Matter — export complet" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
+  </div>
+</section>
+
+<!-- VIDÉO 2 -->
+<section id="video-section-2">
+  <div class="sec-header">
+    <span class="sec-index">03</span>
+    <span class="sec-label">Captation vidéo — MAPP MTL</span>
+  </div>
+  <div class="video-inner reveal">
+    <p class="video-label">Présentation en direct · Pont Van Horne</p>
+    <div class="yt-wrap"><iframe src="https://www.youtube-nocookie.com/embed/6N7UDNn4J3M?rel=0" title="Computer Matter — présentation sous le pont Van Horne" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
+  </div>
+</section>
+
+<!-- AUDIO -->
+<section id="audio-section">
+  <div class="sec-header">
+    <span class="sec-index">04</span>
+    <span class="sec-label">Composition sonore</span>
+  </div>
+  <div class="audio-wrap reveal">
+    <p class="audio-label">Trame sonore — techno déconstruite</p>
+    <div class="audio-player">
+      <button class="play-btn" id="playBtn" aria-label="Lecture / Pause">
+        <div class="play-icon" id="playIcon"></div>
+        <div class="pause-icon" id="pauseIcon">
+          <div class="pause-bar"></div>
+          <div class="pause-bar"></div>
+        </div>
+      </button>
+      <div class="audio-info">
+        <p class="audio-title">Computer Matter</p>
+        <p class="audio-meta">Composition · Mickaël Pilon · 2025</p>
+        <div class="progress-wrap" id="progressWrap">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="audio-time">
+          <span id="timeElapsed">0:00</span>
+          <span id="timeDuration">—</span>
+        </div>
+      </div>
+    </div>
+    <audio id="audioEl" preload="none" src="../extraits%20audios/computer_matter_audio.mp3"></audio>
+  </div>
+</section>
+
+<footer>
+  <p class="ft-copy">© 2025 Mickaël Pilon — Tous droits réservés</p>
+  <p class="ft-sig">Mickaël Pilon</p>
+</footer>
+
+<script>
+const cur=document.getElementById('cur'),ring=document.getElementById('ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px'});
+(function loop(){rx+=(mx-rx)*0.1;ry+=(my-ry)*0.1;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(loop)})();
+document.querySelectorAll('a,button,.video-overlay,.progress-wrap').forEach(el=>{
+  el.addEventListener('mouseenter',()=>ring.classList.add('big'));
+  el.addEventListener('mouseleave',()=>ring.classList.remove('big'));
+});
+
+// AUDIO
+const audio=document.getElementById('audioEl');
+const playBtn=document.getElementById('playBtn');
+const playIcon=document.getElementById('playIcon');
+const pauseIcon=document.getElementById('pauseIcon');
+const progressBar=document.getElementById('progressBar');
+const progressWrap=document.getElementById('progressWrap');
+const timeElapsed=document.getElementById('timeElapsed');
+const timeDuration=document.getElementById('timeDuration');
+function fmt(s){if(!s||isNaN(s))return'—';const m=Math.floor(s/60);const sec=Math.floor(s%60);return m+':'+(sec<10?'0':'')+sec}
+playBtn.addEventListener('click',()=>{
+  if(audio.paused){audio.play();playIcon.style.display='none';pauseIcon.style.display='flex'}
+  else{audio.pause();playIcon.style.display='block';pauseIcon.style.display='none'}
+});
+audio.addEventListener('loadedmetadata',()=>{timeDuration.textContent=fmt(audio.duration)});
+audio.addEventListener('timeupdate',()=>{
+  if(!audio.duration)return;
+  progressBar.style.width=((audio.currentTime/audio.duration)*100)+'%';
+  timeElapsed.textContent=fmt(audio.currentTime);
+});
+audio.addEventListener('ended',()=>{playIcon.style.display='block';pauseIcon.style.display='none';progressBar.style.width='0%';timeElapsed.textContent='0:00'});
+progressWrap.addEventListener('click',e=>{
+  if(!audio.duration)return;
+  const rect=progressWrap.getBoundingClientRect();
+  audio.currentTime=((e.clientX-rect.left)/rect.width)*audio.duration;
+});
+
+// SCROLL REVEAL
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on')})},{threshold:0.08});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>

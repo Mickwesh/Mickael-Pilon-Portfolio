@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mickaël Pilon — Sound Artist</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Syne:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a08;
+  --surface:#111110;
+  --surface2:#181816;
+  --ink:#e8e4da;
+  --ink2:#9a9690;
+  --ink3:#5a5852;
+  --accent:#c4a96e;
+  --accent2:#7a9e7e;
+  --border:rgba(196,169,110,0.12);
+  --border2:rgba(196,169,110,0.22);
+  --r:#ff2d55;
+  --g:#00ff88;
+  --b:#0088ff;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:'Syne',sans-serif;overflow-x:hidden;cursor:none}
+
+/* ── CURSOR ── */
+.cur{position:fixed;width:6px;height:6px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:transform 0.12s}
+.cur-ring{position:fixed;width:28px;height:28px;border:1px solid rgba(196,169,110,0.35);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width 0.3s,height 0.3s,border-color 0.3s}
+.cur-ring.big{width:48px;height:48px;border-color:rgba(196,169,110,0.6)}
+
+/* ── GRAIN ── */
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:500;opacity:0.035;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* ── GLITCH KEYFRAMES ── */
+@keyframes gh1{
+  0%,100%{clip-path:inset(100% 0 0 0);transform:translate(0,0)}
+  20%{clip-path:inset(18% 0 58% 0);transform:translate(-5px,0)}
+  40%{clip-path:inset(62% 0 10% 0);transform:translate(4px,0)}
+  60%{clip-path:inset(35% 0 42% 0);transform:translate(-3px,0)}
+  80%{clip-path:inset(5% 0 78% 0);transform:translate(6px,0)}
+}
+@keyframes gh2{
+  0%,100%{clip-path:inset(100% 0 0 0);transform:translate(0,0)}
+  25%{clip-path:inset(44% 0 28% 0);transform:translate(5px,0)}
+  50%{clip-path:inset(8% 0 72% 0);transform:translate(-4px,0)}
+  75%{clip-path:inset(70% 0 5% 0);transform:translate(3px,0)}
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+@keyframes waveAnim{0%,100%{transform:scaleY(0.25)}50%{transform:scaleY(1)}}
+@keyframes scrollDrop{0%,100%{opacity:0.2;transform:scaleY(0.7)}50%{opacity:1;transform:scaleY(1)}}
+@keyframes blinkCaret{0%,49%{opacity:1}50%,100%{opacity:0}}
+
+/* ── GLITCH WRAPPER ── */
+.glitch{position:relative;display:inline-block}
+.glitch .gl,.glitch .glb{
+  position:absolute;inset:0;
+  pointer-events:none;
+  opacity:0;transition:opacity 0.05s;
+}
+.glitch .gl{color:var(--r)}
+.glitch .glb{color:var(--b)}
+.glitch:hover .gl{opacity:0.9;animation:gh1 0.45s steps(1) infinite}
+.glitch:hover .glb{opacity:0.75;animation:gh2 0.45s steps(1) infinite 0.07s}
+
+/* ── NAV ── */
+nav{
+  position:sticky;top:0;z-index:300;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:1.4rem 3rem;
+  background:rgba(10,10,8,0.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:1.05rem;letter-spacing:0.08em;
+  color:var(--ink);text-decoration:none;
+}
+.nav-logo .gl{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;letter-spacing:0.08em}
+.nav-logo .glb{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;letter-spacing:0.08em}
+.nav-links{display:flex;gap:2.5rem;list-style:none}
+.nav-links a{
+  font-size:0.65rem;letter-spacing:0.22em;text-transform:uppercase;
+  color:var(--ink3);text-decoration:none;transition:color 0.25s;
+}
+.nav-links a .gl,.nav-links a .glb{font-size:0.65rem;letter-spacing:0.22em;text-transform:uppercase}
+.nav-links a:hover{color:var(--accent)}
+.nav-avail{
+  font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;
+  color:var(--ink3);display:flex;align-items:center;gap:0.5rem;
+}
+.avail-dot{width:5px;height:5px;background:var(--accent2);border-radius:50%;
+  box-shadow:0 0 6px var(--accent2);animation:blinkCaret 2.4s infinite}
+
+/* ── HERO ── */
+#hero{
+  min-height:92vh;display:flex;flex-direction:column;
+  justify-content:flex-end;padding:4rem 3rem;
+  position:relative;overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 55% 45% at 72% 38%, rgba(122,158,126,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 55% at 18% 65%, rgba(196,169,110,0.05) 0%, transparent 55%);
+}
+.hero-wave{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:55%;height:90px;opacity:0.09;
+  display:flex;align-items:center;gap:2px;
+  pointer-events:none;
+}
+.wbar{
+  flex:1;background:var(--accent);border-radius:1px;
+  transform-origin:center;animation:waveAnim 2s ease-in-out infinite;
+}
+.hero-content{position:relative;z-index:1}
+.hero-eyebrow{
+  font-size:0.6rem;letter-spacing:0.3em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:2rem;
+  opacity:0;animation:fadeUp 0.9s ease forwards 0.3s;
+}
+.hero-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(4rem,11vw,8rem);font-weight:300;line-height:0.92;
+  letter-spacing:-0.01em;
+  opacity:0;animation:fadeUp 0.9s ease forwards 0.5s;
+}
+.hero-title em{font-style:italic;color:var(--accent)}
+.hero-sub{
+  font-size:0.8rem;letter-spacing:0.08em;color:var(--ink2);
+  line-height:1.8;margin-top:2.2rem;max-width:380px;
+  opacity:0;animation:fadeUp 0.9s ease forwards 0.7s;
+}
+.hero-row{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  margin-top:3.5rem;
+  opacity:0;animation:fadeUp 0.9s ease forwards 0.9s;
+}
+.hero-loc{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink3)}
+.hero-scroll{display:flex;flex-direction:column;align-items:center;gap:0.4rem}
+.scroll-line{width:1px;height:50px;background:linear-gradient(to bottom,transparent,var(--accent));animation:scrollDrop 2s ease-in-out infinite}
+.scroll-txt{font-size:0.5rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--ink3);writing-mode:vertical-rl}
+
+/* ── SECTIONS ── */
+section{border-top:1px solid var(--border)}
+.sec-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.25rem 3rem;border-bottom:1px solid var(--border);
+}
+.sec-index{font-size:0.55rem;letter-spacing:0.2em;color:var(--ink3)}
+.sec-label{font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--ink2)}
+.sec-note{font-size:0.55rem;letter-spacing:0.15em;color:var(--ink3)}
+
+/* ── PROJECTS ── */
+.proj-row{
+  display:grid;grid-template-columns:64px 1fr 200px 40px;
+  align-items:center;gap:2rem;
+  padding:2rem 3rem;
+  border-bottom:1px solid var(--border);
+  text-decoration:none;color:inherit;
+  position:relative;transition:background 0.3s;
+  display:grid;
+}
+.proj-row::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;
+  width:2px;background:var(--accent);
+  transform:scaleY(0);transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+.proj-row:hover{background:rgba(196,169,110,0.03)}
+.proj-row:hover::before{transform:scaleY(1)}
+.proj-num{font-size:0.6rem;letter-spacing:0.15em;color:var(--ink3)}
+.proj-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.55rem;font-weight:400;line-height:1.1;
+}
+.proj-name .gl,.proj-name .glb{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.55rem;font-weight:400;line-height:1.1;
+}
+.proj-type{
+  font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--ink3);
+  margin-top:0.35rem;display:block;
+}
+.proj-tags{display:flex;flex-wrap:wrap;gap:0.4rem}
+.ptag{
+  font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;
+  padding:0.28rem 0.6rem;border:1px solid var(--border2);color:var(--ink3);
+  transition:border-color 0.2s,color 0.2s;
+}
+.proj-row:hover .ptag{color:var(--ink2)}
+.proj-arr{
+  font-size:1rem;color:var(--border2);transition:all 0.25s;text-align:right;
+}
+.proj-row:hover .proj-arr{color:var(--accent);transform:translate(3px,-3px)}
+.proj-row.ph .proj-name{color:var(--ink3)}
+.proj-row.ph .proj-arr{opacity:0.2}
+
+/* ── ABOUT ── */
+.about-grid{display:grid;grid-template-columns:1fr 1.5fr}
+.about-left{
+  padding:4rem 3rem;border-right:1px solid var(--border);
+  display:flex;flex-direction:column;gap:2.5rem;
+}
+.about-photo{
+  width:100%;aspect-ratio:3/4;background:var(--surface);
+  border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem;
+  position:relative;overflow:hidden;
+}
+.photo-placeholder{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink3)}
+/* To add your photo: replace the .about-photo div content with <img src="images/your-photo.jpg" style="width:100%;height:100%;object-fit:cover"> */
+.about-caption{font-size:0.55rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink3);text-align:center}
+.about-right{padding:4rem 3rem}
+.about-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(2.2rem,4vw,3.2rem);font-weight:300;line-height:1;
+  margin-bottom:0.4rem;
+}
+.about-name .gl,.about-name .glb{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(2.2rem,4vw,3.2rem);font-weight:300;line-height:1;
+}
+.about-role{font-size:0.65rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--accent);margin-bottom:2.5rem}
+.about-bio{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:1.18rem;line-height:1.85;color:var(--ink2);
+  border-left:1px solid var(--accent);padding-left:1.5rem;
+  margin-bottom:2.5rem;
+}
+.about-body{font-size:0.82rem;line-height:1.95;color:var(--ink2);margin-bottom:3rem}
+.skills-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.skill-item{
+  display:flex;align-items:center;gap:0.7rem;
+  font-size:0.72rem;letter-spacing:0.06em;
+  color:var(--ink2);padding:0.7rem 0;border-bottom:1px solid var(--border);
+}
+.skill-item:nth-child(odd){border-right:1px solid var(--border);padding-right:1.5rem}
+.skill-item:nth-child(even){padding-left:1.5rem}
+.sdot{width:3px;height:3px;border-radius:50%;background:var(--accent2);flex-shrink:0}
+
+/* ── CONTACT ── */
+.contact-inner{display:grid;grid-template-columns:1fr 1fr}
+.contact-left{padding:4rem 3rem;border-right:1px solid var(--border);display:flex;flex-direction:column;justify-content:space-between}
+.contact-h{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(2.5rem,5vw,4rem);font-weight:300;line-height:1.05;margin-bottom:1.5rem;
+}
+.contact-h em{font-style:italic;color:var(--accent)}
+.contact-h .gl,.contact-h .glb{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(2.5rem,5vw,4rem);font-weight:300;line-height:1.05;
+}
+.contact-sub{font-size:0.8rem;color:var(--ink2);line-height:1.85;max-width:320px}
+.contact-right{padding:4rem 3rem;display:flex;flex-direction:column;justify-content:center}
+.clink{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.3rem 0;border-bottom:1px solid var(--border);
+  text-decoration:none;color:inherit;
+  transition:padding-left 0.25s;
+}
+.clink:first-child{border-top:1px solid var(--border)}
+.clink:hover{padding-left:0.75rem}
+.cl-lbl{font-size:0.55rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--ink3);margin-bottom:0.25rem}
+.cl-val{
+  font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:400;
+  transition:color 0.2s;
+}
+.cl-val .gl,.cl-val .glb{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:400}
+.clink:hover .cl-val{color:var(--accent)}
+.cl-arr{font-size:0.85rem;color:var(--ink3);transition:all 0.2s}
+.clink:hover .cl-arr{color:var(--accent);transform:translate(4px,-4px)}
+
+/* ── FOOTER ── */
+footer{
+  border-top:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;
+  padding:1.5rem 3rem;
+}
+.ft-copy{font-size:0.55rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink3)}
+.ft-sig{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.9rem;color:var(--ink3)}
+
+/* ── REVEAL ── */
+.reveal{opacity:0;transform:translateY(22px);transition:opacity 0.8s ease,transform 0.8s ease}
+.reveal.on{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<div class="cur" id="cur"></div>
+<div class="cur-ring" id="ring"></div>
+
+<!-- ════════════════════════════════
+     NAV
+     Pour changer ton nom : remplace "Mickaël Pilon" par ton nom de scène partout.
+     ════════════════════════════════ -->
+<nav>
+  <a href="#hero" class="nav-logo glitch">
+    Mickaël Pilon
+    <span class="gl" aria-hidden="true">Mickaël Pilon</span>
+    <span class="glb" aria-hidden="true">Mickaël Pilon</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#projets" class="glitch">
+      Œuvres
+      <span class="gl" aria-hidden="true">Œuvres</span>
+      <span class="glb" aria-hidden="true">Œuvres</span>
+    </a></li>
+    <li><a href="#about" class="glitch">
+      À propos
+      <span class="gl" aria-hidden="true">À propos</span>
+      <span class="glb" aria-hidden="true">À propos</span>
+    </a></li>
+    <li><a href="html/musique.html" class="glitch">
+      Musique
+      <span class="gl" aria-hidden="true">Musique</span>
+      <span class="glb" aria-hidden="true">Musique</span>
+    </a></li>
+    <li><a href="html/production.html" class="glitch">
+      Production
+      <span class="gl" aria-hidden="true">Production</span>
+      <span class="glb" aria-hidden="true">Production</span>
+    </a></li>
+    <li><a href="#contact" class="glitch">
+      Contact
+      <span class="gl" aria-hidden="true">Contact</span>
+      <span class="glb" aria-hidden="true">Contact</span>
+    </a></li>
+  </ul>
+  <div class="nav-avail">
+    <span class="avail-dot"></span>
+    Disponible pour collaborations
+  </div>
+</nav>
+
+<!-- ════════════════════════════════
+     HERO
+     ════════════════════════════════ -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-wave" id="wave"></div>
+  <div class="hero-content">
+    <!-- Modifie la ligne en dessous pour changer ta spécialité / ville -->
+    <p class="hero-eyebrow">Son · Espace · Interaction · Montréal</p>
+    <h1 class="hero-title">
+      Création<br>
+      <em>sonore</em><br>
+      &amp; matière
+    </h1>
+    <!-- Modifie ta description courte ici -->
+    <p class="hero-sub">Artiste audio-visuel travaillant à la frontière du son, de l'interaction et des processus génératifs.</p>
+    <div class="hero-row">
+      <span class="hero-loc">Tiohtià:ke / Montréal QC</span>
+      <div class="hero-scroll">
+        <span class="scroll-txt">Explorer</span>
+        <div class="scroll-line"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════
+     ŒUVRES
+     Pour ajouter un projet :
+       - Copie un bloc .proj-row
+       - Retire la classe "ph" si c'est un vrai projet
+       - Mets à jour le titre, type, tags
+       - Change href="html/sans-reflet.html" par le lien vers ta page projet
+     ════════════════════════════════ -->
+<section id="projets">
+  <div class="sec-header">
+    <span class="sec-index">02</span>
+    <span class="sec-label">Œuvres sélectionnées</span>
+    <span class="sec-note"></span>
+  </div>
+  <div class="proj-list">
+
+    <a class="proj-row reveal" href="html/sans-reflet.html" style="display:grid;grid-template-columns:64px 1fr 200px 40px">
+      <span class="proj-num">001</span>
+      <div>
+        <div class="proj-name glitch">
+          Sans Reflet
+          <span class="gl" aria-hidden="true">Sans Reflet</span>
+          <span class="glb" aria-hidden="true">Sans Reflet</span>
+        </div>
+        <span class="proj-type">Installation interactive immersive</span>
+      </div>
+      <div class="proj-tags">
+        <span class="ptag">Sound design</span>
+        <span class="ptag">TouchDesigner</span>
+        <span class="ptag">4 canaux</span>
+      </div>
+      <span class="proj-arr">↗</span>
+    </a>
+
+    <a class="proj-row reveal" href="html/beton-vivant.html" style="display:grid;grid-template-columns:64px 1fr 200px 40px">
+      <span class="proj-num">002</span>
+      <div>
+        <div class="proj-name glitch">
+          Wall of Sound
+          <span class="gl" aria-hidden="true">Wall of Sound</span>
+          <span class="glb" aria-hidden="true">Wall of Sound</span>
+        </div>
+        <span class="proj-type">Scénographie de performance live</span>
+      </div>
+      <div class="proj-tags">
+        <span class="ptag">Sound design</span>
+        <span class="ptag">Graffiti</span>
+        <span class="ptag">MIDI live</span>
+      </div>
+      <span class="proj-arr">↗</span>
+    </a>
+
+    <a class="proj-row reveal" href="html/computer-matter.html" style="display:grid;grid-template-columns:64px 1fr 200px 40px">
+      <span class="proj-num">003</span>
+      <div>
+        <div class="proj-name glitch">
+          Computer Matter
+          <span class="gl" aria-hidden="true">Computer Matter</span>
+          <span class="glb" aria-hidden="true">Computer Matter</span>
+        </div>
+        <span class="proj-type">Mapping audio-réactif · MAPP MTL</span>
+      </div>
+      <div class="proj-tags">
+        <span class="ptag">TouchDesigner</span>
+        <span class="ptag">Ableton</span>
+        <span class="ptag">Mapping</span>
+      </div>
+      <span class="proj-arr">↗</span>
+    </a>
+
+</section>
+
+<!-- ════════════════════════════════
+     À PROPOS
+     Photo : remplace le contenu de .about-photo par :
+       <img src="images/ta-photo.jpg" style="width:100%;height:100%;object-fit:cover">
+     ════════════════════════════════ -->
+<section id="about">
+  <div class="sec-header">
+    <span class="sec-index">03</span>
+    <span class="sec-label">À propos</span>
+    <span class="sec-note"></span>
+  </div>
+  <div class="about-grid">
+    <div class="about-left reveal">
+      <div class="about-photo">
+        <img src="images/ballerAssPicture.PNG" alt="Mickaël Pilon" style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block">
+      </div>
+      <p class="about-caption">Montréal, QC — 2026</p>
+    </div>
+    <div class="about-right reveal">
+      <div class="about-name glitch">
+        Mickaël Pilon
+        <span class="gl" aria-hidden="true">Mickaël Pilon</span>
+        <span class="glb" aria-hidden="true">Mickaël Pilon</span>
+      </div>
+      <p class="about-role">Artiste sonore · Arts médiatiques, UQAM</p>
+      <!-- Modifie la citation ici -->
+      <!-- Modifie ta bio ici -->
+      <p class="about-body">
+        Artiste audio-visuel basé à Montréal, je développe des créations sonores pour expériences interactives, installations immersives et projets vidéo — cinématiques ou ludiques. J'offre également mes services en tant que compositeur.<br><br>
+        Ma pratique articule sound design, composition, programmation et ingénierie sonore. Étudiant en médias interactifs à l'UQAM, je m'intéresse aux processus génératifs, à la spatialisation sonore et à l'interactivité — la relation entre le corps, l'espace et l'écoute comme terrain d'exploration.
+      </p>
+      <div class="skills-grid">
+        <div class="skill-item"><span class="sdot"></span>Ableton Live</div>
+        <div class="skill-item"><span class="sdot"></span>TouchDesigner</div>
+        <div class="skill-item"><span class="sdot"></span>Synthèse sonore</div>
+        <div class="skill-item"><span class="sdot"></span>Spatialisation 4ch</div>
+        <div class="skill-item"><span class="sdot"></span>Arduino · Physical computing</div>
+        <div class="skill-item"><span class="sdot"></span>Art génératif</div>
+        <div class="skill-item"><span class="sdot"></span>Feedback loops</div>
+        <div class="skill-item"><span class="sdot"></span>Glitch art</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════
+     CONTACT
+     Remplace les href et les textes par tes vraies coordonnées.
+     ════════════════════════════════ -->
+<section id="contact">
+  <div class="sec-header">
+    <span class="sec-index">04</span>
+    <span class="sec-label">Contact</span>
+    <span class="sec-note"></span>
+  </div>
+  <div class="contact-inner">
+    <div class="contact-left reveal">
+      <div>
+        <h2 class="contact-h glitch">
+          Me<br><em>contacter.</em>
+          <span class="gl" aria-hidden="true">Me<br>contacter.</span>
+          <span class="glb" aria-hidden="true">Me<br>contacter.</span>
+        </h2>
+        <p class="contact-sub">Ouvert aux collaborations artistiques, commandes sonores, résidences et projets expérimentaux.</p>
+      </div>
+    </div>
+    <div class="contact-right reveal">
+
+      <!-- EMAIL — modifie l'adresse -->
+      <a href="mailto:mickael.pilon2004@gmail.com" class="clink">
+        <div>
+          <p class="cl-lbl">Email</p>
+          <div class="cl-val glitch">mickael.pilon2004@gmail.com<span class="gl" aria-hidden="true">mickael.pilon2004@gmail.com</span><span class="glb" aria-hidden="true">mickael.pilon2004@gmail.com</span></div>
+        </div>
+        <span class="cl-arr">↗</span>
+      </a>
+
+      <!-- INSTAGRAM — modifie le handle -->
+      <a href="https://instagram.com/chevalier_de_la_classe_moyenne" target="_blank" class="clink">
+        <div>
+          <p class="cl-lbl">Instagram</p>
+          <div class="cl-val glitch">@chevalierdelaclassemoyenne<span class="gl" aria-hidden="true">@chevalierdelaclassemoyenne</span><span class="glb" aria-hidden="true">@chevalierdelaclassemoyenne</span></div>
+        </div>
+        <span class="cl-arr">↗</span>
+      </a>
+
+      <!-- SOUNDCLOUD — modifie le handle -->
+      <a href="https://soundcloud.com/m_a-i_d" target="_blank" class="clink">
+        <div>
+          <p class="cl-lbl">SoundCloud</p>
+          <div class="cl-val glitch">m_a-i_d<span class="gl" aria-hidden="true">m_a-i_d</span><span class="glb" aria-hidden="true">m_a-i_d</span></div>
+        </div>
+        <span class="cl-arr">↗</span>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p class="ft-copy">© 2026 — Tous droits réservés</p>
+  <p class="ft-sig">Mickaël Pilon</p>
+</footer>
+
+<script>
+/* ── CURSEUR CUSTOM ── */
+const cur = document.getElementById('cur');
+const ring = document.getElementById('ring');
+let mx=0,my=0,rx=0,ry=0;
+
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX; my=e.clientY;
+  cur.style.left=mx+'px'; cur.style.top=my+'px';
+});
+
+(function loop(){
+  rx+=(mx-rx)*0.1; ry+=(my-ry)*0.1;
+  ring.style.left=rx+'px'; ring.style.top=ry+'px';
+  requestAnimationFrame(loop);
+})();
+
+document.querySelectorAll('a,.proj-row,.clink,.glitch').forEach(el=>{
+  el.addEventListener('mouseenter',()=>ring.classList.add('big'));
+  el.addEventListener('mouseleave',()=>ring.classList.remove('big'));
+});
+
+/* ── WAVEFORM ── */
+const wave=document.getElementById('wave');
+for(let i=0;i<60;i++){
+  const b=document.createElement('div');
+  b.className='wbar';
+  const h=12+Math.abs(Math.sin(i*0.22))*35+Math.random()*18;
+  b.style.height=h+'px';
+  b.style.animationDelay=(i*0.04)+'s';
+  b.style.animationDuration=(1.6+Math.random()*1.4)+'s';
+  wave.appendChild(b);
+}
+
+/* ── SCROLL REVEAL ── */
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on')});
+},{threshold:0.08});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>

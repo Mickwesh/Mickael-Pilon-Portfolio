@@ -128,6 +128,53 @@ nav{position:sticky;top:0;z-index:300;display:flex;justify-content:space-between
 footer{border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;padding:1.5rem 3rem}
 .ft-copy{font-size:0.55rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink3)}
 .ft-sig{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.9rem;color:var(--ink3)}
+
+/* ================= NAVIGATION PARTAGÉE (toutes les pages) ================= */
+html{scroll-padding-top:4.5rem}
+nav{position:sticky;top:0;z-index:300;display:flex;justify-content:space-between;align-items:center;gap:1.5rem;padding:1.4rem 3rem;background:rgba(10,10,8,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav-links{display:flex;gap:2.5rem;list-style:none}
+.nav-links a{font-size:0.65rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--ink3);text-decoration:none;transition:color 0.25s}
+.nav-links a .gl,.nav-links a .glb{font-size:0.65rem;letter-spacing:0.22em;text-transform:uppercase}
+.nav-links a:hover,.nav-links a[aria-current="page"]{color:var(--accent)}
+.nav-avail{font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--ink3);display:flex;align-items:center;gap:0.5rem;white-space:nowrap}
+.avail-dot{width:5px;height:5px;background:var(--accent2);border-radius:50%;box-shadow:0 0 6px var(--accent2);animation:navBlink 2.4s infinite}
+@keyframes navBlink{0%,49%{opacity:1}50%,100%{opacity:0}}
+.nav-toggle{display:none;flex-direction:column;justify-content:center;gap:5px;width:44px;height:44px;margin-right:-10px;padding:0 10px;background:none;border:none;cursor:pointer}
+.nav-toggle span{display:block;height:1px;background:var(--ink);transition:transform .25s,opacity .25s}
+nav.open .nav-toggle span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+nav.open .nav-toggle span:nth-child(2){opacity:0}
+nav.open .nav-toggle span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+
+/* Zone de clic agrandie sur les barres de progression audio */
+.progress-wrap::before,.track-progress-wrap::before,.rel-progress-wrap::before{content:'';position:absolute;left:0;right:0;top:-14px;bottom:-14px}
+
+/* Appareils tactiles : pas de curseur personnalisé */
+@media (hover:none),(pointer:coarse){.cur,.cur-ring{display:none}}
+
+@media (max-width:900px){
+  nav{padding:0.6rem 1.25rem}
+  .nav-toggle{display:flex}
+  .nav-avail{display:none}
+  .nav-links{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;gap:0;background:rgba(10,10,8,0.98);border-bottom:1px solid var(--border);padding:0.25rem 1.25rem 0.75rem}
+  nav.open .nav-links{display:flex}
+  .nav-links li a{display:block;padding:1.05rem 0;border-bottom:1px solid var(--border);font-size:0.75rem}
+  .nav-links li a .gl,.nav-links li a .glb{font-size:0.75rem}
+  .nav-links li:last-child a{border-bottom:none}
+}
+
+@media (max-width:900px){
+  #hero{padding:3rem 1.25rem 2.5rem}
+  .hero-title{font-size:clamp(3rem,13vw,5rem)}
+  .catalogue{padding:0 1.25rem 3rem}
+  .release{grid-template-columns:104px 1fr;gap:1rem;padding:1.5rem 0;align-items:start}
+  .release::before{left:-1.25rem}
+  .rel-cover{grid-column:1;grid-row:1}
+  .rel-play-btn{grid-column:1;grid-row:1;align-self:center;justify-self:center;z-index:2;background:rgba(10,10,8,0.65);width:44px;height:44px}
+  .rel-info{grid-column:2;grid-row:1}
+  .rel-links{grid-column:1/-1;grid-row:2;flex-direction:row;flex-wrap:wrap}
+  .rel-title,.rel-title .gl,.rel-title .glb{font-size:1.2rem}
+  footer{flex-direction:column;align-items:flex-start;gap:0.5rem;padding:1.25rem}
+}
 </style>
 </head>
 <body>
@@ -135,17 +182,44 @@ footer{border-top:1px solid var(--border);display:flex;justify-content:space-bet
 <div class="cur" id="cur"></div>
 <div class="cur-ring" id="ring"></div>
 
-<nav>
-  <a href="../index.html" class="nav-back glitch">
-    ← Retour
-    <span class="gl" aria-hidden="true">← Retour</span>
-    <span class="glb" aria-hidden="true">← Retour</span>
-  </a>
+<nav id="siteNav">
   <a href="../index.html" class="nav-logo glitch">
     Mickaël Pilon
     <span class="gl" aria-hidden="true">Mickaël Pilon</span>
     <span class="glb" aria-hidden="true">Mickaël Pilon</span>
   </a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="../index.html#projets" class="glitch">
+      Œuvres
+      <span class="gl" aria-hidden="true">Œuvres</span>
+      <span class="glb" aria-hidden="true">Œuvres</span>
+    </a></li>
+    <li><a href="../index.html#about" class="glitch">
+      À propos
+      <span class="gl" aria-hidden="true">À propos</span>
+      <span class="glb" aria-hidden="true">À propos</span>
+    </a></li>
+    <li><a href="musique.html" class="glitch">
+      Musique
+      <span class="gl" aria-hidden="true">Musique</span>
+      <span class="glb" aria-hidden="true">Musique</span>
+    </a></li>
+    <li><a href="production.html" class="glitch" aria-current="page">
+      Production
+      <span class="gl" aria-hidden="true">Production</span>
+      <span class="glb" aria-hidden="true">Production</span>
+    </a></li>
+    <li><a href="../index.html#contact" class="glitch">
+      Contact
+      <span class="gl" aria-hidden="true">Contact</span>
+      <span class="glb" aria-hidden="true">Contact</span>
+    </a></li>
+  </ul>
+  <div class="nav-avail">
+    <span class="avail-dot"></span>
+    Disponible pour collaborations
+  </div>
+  <button class="nav-toggle" id="navToggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="navLinks"><span></span><span></span><span></span></button>
 </nav>
 
 <!-- HERO -->
@@ -256,6 +330,19 @@ footer{border-top:1px solid var(--border);display:flex;justify-content:space-bet
 </footer>
 
 <script>
+/* Lecture avec avance/recul fiable : le fichier est chargé en mémoire (blob).
+   Certains hébergeurs ne gèrent pas les "range requests", ce qui fait redémarrer
+   l'audio quand on clique dans la barre de progression. */
+function loadBlob(a){
+  if(a._blobReady)return Promise.resolve();
+  if(a._blobLoading)return a._blobLoading;
+  a._blobLoading=fetch(a.src)
+    .then(function(r){if(!r.ok)throw new Error(r.status);return r.blob()})
+    .then(function(b){a.src=URL.createObjectURL(b);a._blobReady=true})
+    .catch(function(){a._blobLoading=null});
+  return a._blobLoading;
+}
+
 // CURSOR
 const cur=document.getElementById('cur'),ring=document.getElementById('ring');
 let mx=0,my=0,rx=0,ry=0;
@@ -328,7 +415,7 @@ document.querySelectorAll('.release').forEach(rel=>{
       currentAudio=null;currentRelease=null;
     } else {
       stopCurrent();
-      audio.play();rel.classList.add('playing');
+      loadBlob(audio).then(()=>{if(currentAudio===audio)audio.play()});rel.classList.add('playing');
       playIcon.style.display='none';pauseIcon.style.display='flex';
       currentAudio=audio;currentRelease=rel;
     }
@@ -344,6 +431,17 @@ document.querySelectorAll('a').forEach(el=>{
   el.addEventListener('mouseenter',()=>ring.classList.add('big'));
   el.addEventListener('mouseleave',()=>ring.classList.remove('big'));
 });
+</script>
+<script>
+/* Menu mobile */
+(function(){
+  var nav=document.getElementById('siteNav'),btn=document.getElementById('navToggle');
+  if(!nav||!btn)return;
+  function setOpen(o){nav.classList.toggle('open',o);btn.setAttribute('aria-expanded',o?'true':'false');btn.setAttribute('aria-label',o?'Fermer le menu':'Ouvrir le menu')}
+  btn.addEventListener('click',function(){setOpen(!nav.classList.contains('open'))});
+  nav.querySelectorAll('.nav-links a').forEach(function(a){a.addEventListener('click',function(){setOpen(false)})});
+  window.addEventListener('resize',function(){if(window.innerWidth>900)setOpen(false)});
+})();
 </script>
 </body>
 </html>

@@ -287,6 +287,64 @@ footer{
 /* ── REVEAL ── */
 .reveal{opacity:0;transform:translateY(22px);transition:opacity 0.8s ease,transform 0.8s ease}
 .reveal.on{opacity:1;transform:translateY(0)}
+
+/* ================= NAVIGATION PARTAGÉE (toutes les pages) ================= */
+html{scroll-padding-top:4.5rem}
+nav{position:sticky;top:0;z-index:300;display:flex;justify-content:space-between;align-items:center;gap:1.5rem;padding:1.4rem 3rem;background:rgba(10,10,8,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav-links{display:flex;gap:2.5rem;list-style:none}
+.nav-links a{font-size:0.65rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--ink3);text-decoration:none;transition:color 0.25s}
+.nav-links a .gl,.nav-links a .glb{font-size:0.65rem;letter-spacing:0.22em;text-transform:uppercase}
+.nav-links a:hover,.nav-links a[aria-current="page"]{color:var(--accent)}
+.nav-avail{font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--ink3);display:flex;align-items:center;gap:0.5rem;white-space:nowrap}
+.avail-dot{width:5px;height:5px;background:var(--accent2);border-radius:50%;box-shadow:0 0 6px var(--accent2);animation:navBlink 2.4s infinite}
+@keyframes navBlink{0%,49%{opacity:1}50%,100%{opacity:0}}
+.nav-toggle{display:none;flex-direction:column;justify-content:center;gap:5px;width:44px;height:44px;margin-right:-10px;padding:0 10px;background:none;border:none;cursor:pointer}
+.nav-toggle span{display:block;height:1px;background:var(--ink);transition:transform .25s,opacity .25s}
+nav.open .nav-toggle span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+nav.open .nav-toggle span:nth-child(2){opacity:0}
+nav.open .nav-toggle span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+
+/* Zone de clic agrandie sur les barres de progression audio */
+.progress-wrap::before,.track-progress-wrap::before,.rel-progress-wrap::before{content:'';position:absolute;left:0;right:0;top:-14px;bottom:-14px}
+
+/* Appareils tactiles : pas de curseur personnalisé */
+@media (hover:none),(pointer:coarse){.cur,.cur-ring{display:none}}
+
+@media (max-width:900px){
+  nav{padding:0.6rem 1.25rem}
+  .nav-toggle{display:flex}
+  .nav-avail{display:none}
+  .nav-links{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;gap:0;background:rgba(10,10,8,0.98);border-bottom:1px solid var(--border);padding:0.25rem 1.25rem 0.75rem}
+  nav.open .nav-links{display:flex}
+  .nav-links li a{display:block;padding:1.05rem 0;border-bottom:1px solid var(--border);font-size:0.75rem}
+  .nav-links li a .gl,.nav-links li a .glb{font-size:0.75rem}
+  .nav-links li:last-child a{border-bottom:none}
+}
+
+@media (max-width:900px){
+  #hero{padding:3rem 1.25rem}
+  .hero-title{font-size:clamp(3rem,14vw,5.5rem)}
+  .sec-header{padding:1rem 1.25rem}
+  .proj-row{grid-template-columns:36px 1fr 24px !important;gap:0.75rem 1rem !important;padding:1.25rem !important}
+  .proj-num{grid-column:1;grid-row:1}
+  .proj-row>div:nth-child(2){grid-column:2;grid-row:1}
+  .proj-arr{grid-column:3;grid-row:1}
+  .proj-tags{grid-column:2/4;grid-row:2}
+  .about-grid{grid-template-columns:1fr}
+  .about-left{border-right:none;border-bottom:1px solid var(--border);padding:2.5rem 1.25rem}
+  .about-right{padding:2.5rem 1.25rem}
+  .about-photo{max-width:320px}
+  .contact-inner{grid-template-columns:1fr}
+  .contact-left{border-right:none;border-bottom:1px solid var(--border);padding:2.5rem 1.25rem}
+  .contact-right{padding:2.5rem 1.25rem}
+  .cl-val{overflow-wrap:anywhere}
+  footer{flex-direction:column;align-items:flex-start;gap:0.5rem;padding:1.25rem}
+}
+@media (max-width:480px){
+  .skills-grid{grid-template-columns:1fr}
+  .skill-item:nth-child(odd){border-right:none;padding-right:0}
+  .skill-item:nth-child(even){padding-left:0}
+}
 </style>
 </head>
 <body>
@@ -298,13 +356,13 @@ footer{
      NAV
      Pour changer ton nom : remplace "Mickaël Pilon" par ton nom de scène partout.
      ════════════════════════════════ -->
-<nav>
+<nav id="siteNav">
   <a href="#hero" class="nav-logo glitch">
     Mickaël Pilon
     <span class="gl" aria-hidden="true">Mickaël Pilon</span>
     <span class="glb" aria-hidden="true">Mickaël Pilon</span>
   </a>
-  <ul class="nav-links">
+  <ul class="nav-links" id="navLinks">
     <li><a href="#projets" class="glitch">
       Œuvres
       <span class="gl" aria-hidden="true">Œuvres</span>
@@ -335,6 +393,7 @@ footer{
     <span class="avail-dot"></span>
     Disponible pour collaborations
   </div>
+  <button class="nav-toggle" id="navToggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="navLinks"><span></span><span></span><span></span></button>
 </nav>
 
 <!-- ════════════════════════════════
@@ -578,6 +637,17 @@ const obs=new IntersectionObserver(entries=>{
   entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on')});
 },{threshold:0.08});
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
+<script>
+/* Menu mobile */
+(function(){
+  var nav=document.getElementById('siteNav'),btn=document.getElementById('navToggle');
+  if(!nav||!btn)return;
+  function setOpen(o){nav.classList.toggle('open',o);btn.setAttribute('aria-expanded',o?'true':'false');btn.setAttribute('aria-label',o?'Fermer le menu':'Ouvrir le menu')}
+  btn.addEventListener('click',function(){setOpen(!nav.classList.contains('open'))});
+  nav.querySelectorAll('.nav-links a').forEach(function(a){a.addEventListener('click',function(){setOpen(false)})});
+  window.addEventListener('resize',function(){if(window.innerWidth>900)setOpen(false)});
+})();
 </script>
 </body>
 </html>
